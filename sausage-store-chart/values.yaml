@@ -49,7 +49,7 @@ backend:
     rollingUpdate:
       maxSurge: 25%
       maxUnavailable: 25%
-  image: YOUR_DOCKERHUB/sausage-backend:latest
+  image: cry1s/sausage-backend:latest
   imagePullPolicy: Always
   resources:
     requests:
@@ -87,7 +87,7 @@ backend-report:
   revisionHistoryLimit: 15
   strategy:
     type: Recreate
-  image: YOUR_DOCKERHUB/sausage-backend-report:latest
+  image: cry1s/sausage-backend-report:latest
   containerPort: 8080
   env:
     port: "8080"

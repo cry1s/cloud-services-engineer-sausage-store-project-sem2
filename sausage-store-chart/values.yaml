@@ -1,6 +1,7 @@
 global:
   imagePullPolicy: Always
-  ###vault:
+  vault:
+    enabled: "false"
   ###  host: ip
   ###  name: vault
   ###  vaultToken: someToken
@@ -22,11 +23,11 @@ frontend:
   image: cry1s/sausage-frontend:latest
   resources:
     requests:
-      memory: "128Mi"
+      memory: "64Mi"
       cpu: "100m"
     limits:
       memory: "128Mi"
-      cpu: "1"
+      cpu: "100m"
   nginxConf: nginx.conf
 
 backend:
@@ -57,7 +58,7 @@ backend:
       cpu: "100m"
     limits:
       memory: "512Mi"
-      cpu: "1"
+      cpu: "500m"
   containerPort: 8080
   livenessProbe:
     httpGet:
@@ -96,11 +97,11 @@ backend-report:
     port: 8080
   resources:
     requests:
-      memory: "128Mi"
+      memory: "64Mi"
       cpu: "100m"
     limits:
       memory: "256Mi"
-      cpu: "500m"
+      cpu: "300m"
   hpa:
     enabled: true
     minReplicas: 1
@@ -133,3 +134,10 @@ infra:
       user: reports
       password: reportspassword
     containerPort: 27017
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "50m"
+      limits:
+        memory: "256Mi"
+        cpu: "200m"

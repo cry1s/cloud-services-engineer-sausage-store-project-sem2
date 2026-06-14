@@ -59,8 +59,10 @@ spec:
                 configMapKeyRef:
                   name: {{ .Release.Name }}-{{ .Chart.Name }}-conf
                   key: log_path
+            - name: SPRING_CLOUD_VAULT_ENABLED
+              value: {{ .Values.global.vault.enabled | quote }}
           resources:
-{{ toYaml .Values.resources | indent 12 }} 
+{{ toYaml .Values.resources | indent 12 }}
           ports:
             - name: {{ .Chart.Name }}
               containerPort: {{ .Values.containerPort }}
@@ -94,4 +96,4 @@ spec:
   updatePolicy:
 {{ toYaml .Values.vpa.updatePolicy | indent 4 }} 
   resourcePolicy:
-{{ toYaml .Values.vpa.resourcePolicy | indent 4 }} 
+{{ toYaml .Values.vpa.resourcePolicy | indent 4 }}

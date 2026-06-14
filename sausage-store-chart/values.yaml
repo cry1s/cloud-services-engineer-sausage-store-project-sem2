@@ -62,7 +62,21 @@ backend:
   livenessProbe:
   ### Опишите LivenessProbe для бэкенда
   vpa:
-  ### Опишите VPA для бэкенда
+    updatePolicy:
+      updateMode: "Off"
+    resourcePolicy:
+      containerPolicies:
+        - containerName: "*"
+          mode: "Auto"
+          controlledResources:
+            - cpu
+            - memory
+          minAllowed:
+            cpu: "50m"
+            memory: "128Mi"
+          maxAllowed:
+            cpu: "1"
+            memory: "512Mi"
 
 backend-report:
   replicas: 1
@@ -83,6 +97,11 @@ backend-report:
     limits:
       memory: "256Mi"
       cpu: "500m"
+  hpa:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 70
 
 infra:
   postgresql:

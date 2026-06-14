@@ -45,7 +45,10 @@ backend:
   revisionHistoryLimit: 15
   replicas: 1
   strategy:
-  ### Опишите стратегию RollingUpdate для бэкенда
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
   image: YOUR_DOCKERHUB/sausage-backend:latest
   imagePullPolicy: Always
   resources:
@@ -64,6 +67,8 @@ backend:
 backend-report:
   replicas: 1
   revisionHistoryLimit: 15
+  strategy:
+    type: Recreate
   image: YOUR_DOCKERHUB/sausage-backend-report:latest
   containerPort: 8080
   env:

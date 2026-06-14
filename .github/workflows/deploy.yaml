@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  NEXUS_HELM_REPO: ${{ secrets.NEXUS_HELM_REPO }}
+  NEXUS_HELM_REPO: https://nexus.cloud-services-engineer.education-services.ru/repository/krainikov-cry1s/
   NEXUS_HELM_REPO_USER: ${{ secrets.NEXUS_HELM_REPO_USER }}
   NEXUS_HELM_REPO_PASSWORD: ${{ secrets.NEXUS_HELM_REPO_PASSWORD }}
   SAUSAGE_STORE_NAMESPACE: YOUR_NAMESPACE
@@ -70,7 +70,31 @@ jobs:
       needs: build_and_push_to_docker_hub
 
       steps:
-      #### Опишите необходимые шаги
+        - name: Check out the repo
+          uses: actions/checkout@v4
+
+        - name: Install Helm
+          uses: azure/setup-helm@v4
+          with:
+            version: v3.13.0
+
+        - name: Build Helm chart dependencies
+          run: helm dependency build ./sausage-store-chart
+
+        - name: Lint Helm chart
+          run: helm lint ./sausage-store-chart
+
+        - name: Package Helm chart
+          run: helm package ./sausage-store-chart --destination ./dist
+
+        - name: Upload Helm chart to Nexus
+          run: |
+            chart_package="$(find ./dist -name 'sausage-store-*.tgz' -type f -print -quit)"
+            test -n "${chart_package}"
+            curl --fail-with-body \
+              --user "${NEXUS_HELM_REPO_USER}:${NEXUS_HELM_REPO_PASSWORD}" \
+              --upload-file "${chart_package}" \
+              "${NEXUS_HELM_REPO%/}/$(basename "${chart_package}")"
 
   # Деплоим приложения в кластер Kubernetes с помощью helm-чарт
   deploy_helm_chart_to_kubernetes:
